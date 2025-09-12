@@ -156,7 +156,7 @@ def process_interval(mscf,date_range):
 
     # Set image metadata
     return img2return.set({
-        'system:time_start': ee.Date.fromYMD(year, month, day),
+        'system:time_start': ee.Date.fromYMD(year, month, day).millis(),
         'Year-Month-Day': start.format('YYYY-MM-dd')
     })
 
