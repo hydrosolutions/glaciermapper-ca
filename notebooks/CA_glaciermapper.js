@@ -14,6 +14,8 @@ RiverBasins_2023=RiverBasins_2023.map(function(ft){return ee.Feature(ft).set('NA
 var region_names=ee.List(['...']).cat(RiverBasins_2023.aggregate_array('REGION').distinct());
 var catchment_names=ee.List(['...']).cat(RiverBasins_2023.aggregate_array('NAME').sort());
 
+var isMaintenanceMode = true; // Set this based on your maintenance status
+
 // Import external dependencies
 var batch = require('users/fitoprincipe/geetools:batch');
 var functions4cropmapper = require('users/hydrosolutions/public_functions:functions4cropmapper');
@@ -60,13 +62,6 @@ var layers_download=[
   'projects/ee-hydro4u/assets/snow_CentralAsia/Monthly_snow_water_equivalents_TerraClimate_until2021-12',  
   'projects/ee-hydro4u/assets/snow_CentralAsia/Folder4SLA_v4',
      ]; 
-     
-// List all assets in the SLA folder
-var assetList_SLA = ee.List(ee.data.listAssets(layers_download[5]).assets
-  .map(function(asset) {
-    var fc=ee.FeatureCollection(asset.name);
-    return fc;
-  }));
      
 var variable_names=['value',
 'value','value','value','value','value'];
@@ -1452,7 +1447,7 @@ var get_sla_ic=function(){
     img2return=img2return.focal_mean({radius: 2, kernelType :'circle',units: 'pixels',iterations: 1}).blend(img2return);
     return img2return
       //.set('system:time_start',start)
-      .set('system:time_start',ee.Date.fromYMD(year,month,day))
+      .set('system:time_start',ee.Date.fromYMD(year,month,day).millis())
       .set('Year-Month-Day',start.format('YYYY-MM-dd'));
       //.set('year', ee.Number(start.get('year')).add(month.divide(ee.Number(12)).subtract(ee.Number(1/12))));
   }));
@@ -1752,10 +1747,32 @@ var basin_selection = function(key){
           print('AoiMean_sinceLastExtracted',AoiMean_sinceLastExtracted);          
           
           AoiMean=AoiMean_fromAsset.merge(AoiMean_sinceLastExtracted).sort('system:time_start');
+          chart=get_chart(AoiMean,['East','North','South','West']);
         }
+      } /*else if (layer===0){//this is for accessing pre-processed FSC. Attention! preprocessed FSC is calculated with sc_th=50, while on they fly it is just the mean of the MODIS FSC product.
+        AoiMean_fromAsset=ee.FeatureCollection(ee.FeatureCollection(assetList_SLA.filter(ee.Filter.eq('NAME',basin_selected))).flatten().sort('Year-Month-Day').distinct(['Year-Month-Day'])
+          .select([joinProperty,'fsc'],[joinProperty,'value'])
+          .map(function(ft){
+            var time=ee.Date.parse('YYYY-MM-dd',ee.Feature(ft).get(joinProperty));
+            return ee.Feature(ft).set('system:time_start', time.millis())
+              .set('value',ee.Number(ee.Feature(ft).get('value')).multiply(100));
+          }));
         
-        chart=get_chart(AoiMean,['East','North','South','West']);
-      } else {//ANNUAL layers
+        var last_export_date=ee.Date(AoiMean_fromAsset.sort('Year-Month-Day',false).first().get('Year-Month-Day'));
+                AoiMean = ee.FeatureCollection(get_AoiMean_sample(aoi,selected_ic,ee.Reducer.mean(),tileScaleValue)).map(function(ft){
+            var time=ee.Date.parse('YYYY-MM-dd',ee.Feature(ft).get(joinProperty));
+            return ee.Feature(ft).set('system:time_start', time.millis());
+          });
+        var AoiMean_sinceLastExtracted = ee.FeatureCollection(get_AoiMean_sample(aoi,selected_ic.filterDate(last_export_date.advance(1,'day'),index_date),ee.Reducer.mean(),tileScaleValue)).map(function(ft){
+          var time=ee.Date.parse('YYYY-MM-dd',ee.Feature(ft).get(joinProperty));
+          return ee.Feature(ft).set('system:time_start', time.millis());
+        });      
+        print('AoiMean_sinceLastExtracted',AoiMean_sinceLastExtracted);          
+        AoiMean=AoiMean_fromAsset.merge(AoiMean_sinceLastExtracted).sort('system:time_start');
+        chart=get_chart(AoiMean,'value');
+        print('AoiMean SCF',AoiMean)
+
+      }*/ else {//ANNUAL layers
         AoiMean = ee.FeatureCollection(get_AoiMean(aoi,selected_ic,ee.Reducer.mean(),tileScaleValue));
         chart=get_chart(AoiMean,'value');
       }
@@ -2050,7 +2067,33 @@ var notesPanel = ui.Panel({
 });
 
 var panel4notes=ui.Panel({widgets: [],layout: ui.Panel.Layout.flow('vertical')});
-var instruction=ui.Label('Click on a glacier or select a river basin', {color: 'red',height: '29px',margin: '15px 1px 1px 10px'});
+// var instruction=ui.Label('Click on a glacier or select a river basin', {color: 'red',height: '29px',margin: '15px 1px 1px 10px'});
+
+var instruction = isMaintenanceMode ? 
+  ui.Label({
+    value: '⚠️ SYSTEM MAINTENANCE IN PROGRESS ⚠️\n\n' +
+           'Snow Line Altitude (SLA) data is being updated.\n' +
+           'Some features may be temporarily unavailable.\n\n' +
+           'Other snow metrics remain operational.',
+    style: {
+      color: 'red',
+      fontWeight: 'bold',
+      fontSize: '14px',
+      textAlign: 'center',
+      padding: '15px',
+      margin: '15px 1px 1px 10px',
+      backgroundColor: '#fff3cd',
+      border: '2px solid #ffeaa7',
+      borderRadius: '8px',
+      whiteSpace: 'pre-line'
+    }
+  }) :
+  ui.Label('Click on a glacier or select a river basin', {
+    color: 'red',
+    height: '29px',
+    margin: '15px 1px 1px 10px'
+  });
+
 
 var whitespacepanel=ui.Panel({style: {
     height: '650px',
@@ -2061,3 +2104,11 @@ panel4notes.add(notesButton);
 panel4notes.add(notesPanel);
 
 chartpanel.add(panel4notes);
+
+// List all assets in the SLA folder
+var assetList_SLA = ee.List(ee.data.listAssets(layers_download[5]).assets
+  .map(function(asset) {
+    var fc=ee.FeatureCollection(asset.name);
+    return fc;
+  }));
+     
