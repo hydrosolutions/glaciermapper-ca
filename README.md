@@ -1,6 +1,6 @@
 # Snowcover Mapper
 
-A Python project for analyzing snow cover data and mapping snowlines using MODIS satellite data and digital elevation models.
+A Python project for analyzing snow cover data in glacierized basins of Central Asia and mapping snowlines using MODIS satellite data and digital elevation models.
 
 ## Project Structure
 
