@@ -116,3 +116,7 @@ dmypy.json
 # Temporary files
 *.tmp
 *.temp
+
+# JavaScript files to ignore
+src/Dilara_Kim_codes.js
+src/get_glacier_mask.js
