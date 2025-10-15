@@ -1,12 +1,12 @@
-# GlaciermMapper-CA: Central Asia Glacier Monitoring
+# GlacierMapper-CA: Central Asia Glacier Monitoring
 
 A comprehensive toolkit for analyzing snow cover data in glacierized basins of Central Asia, featuring an interactive web application for real-time glacier monitoring and Python tools for advanced data processing.
 
 ## 🌐 Interactive Web Application
 
-**[GlaciermMapper-CA](https://hydrosolutions.users.earthengine.app/view/glaciermapper-ca)** - Access pre-processed snow metrics online
+**[GlacierMapper-CA](https://hydrosolutions.users.earthengine.app/view/glaciermapper-ca)** - Access pre-processed snow metrics online
 
-The GlaciermMapper-CA Google Earth Engine application provides intuitive access to snow cover data across Central Asian glacierized catchments without requiring any coding knowledge.
+The GlacierMapper-CA Google Earth Engine application provides intuitive access to snow cover data across Central Asian glacierized catchments without requiring any coding knowledge.
 
 ### User Interaction Features:
 - **🗺️ Basin Selection**: Select any basin to visualize comprehensive snow metrics at the catchment level
@@ -81,7 +81,7 @@ glaciermapper-ca/
 ## 🚀 Quick Start
 
 ### Option 1: Use the Web Application (Recommended)
-Simply visit **[GlaciermMapper-CA](https://hydrosolutions.users.earthengine.app/view/glaciermapper-ca)** in your web browser - no installation required!
+Simply visit **[GlacierMapper-CA](https://hydrosolutions.users.earthengine.app/view/glaciermapper-ca)** in your web browser - no installation required!
 
 ### Option 2: Local Development Setup
 
@@ -104,7 +104,7 @@ earthengine authenticate
 ## Usage
 
 ### Web Application
-Visit the [GlaciermMapper-CA app](https://hydrosolutions.users.earthengine.app/view/glaciermapper-ca) and:
+Visit the [GlacierMapper-CA app](https://hydrosolutions.users.earthengine.app/view/glaciermapper-ca) and:
 1. Select a basin from the dropdown menu
 2. Explore glacier polygons by clicking on them
 3. Use the date slider to view temporal changes
@@ -164,7 +164,7 @@ The project processes and generates several types of data:
 
 ## 🌐 Web Application Architecture
 
-The **GlaciermMapper-CA** Google Earth Engine application (`notebooks/CA_glaciermapper.js`) provides:
+The **GlacierMapper-CA** Google Earth Engine application (`notebooks/CA_glaciermapper.js`) provides:
 
 - **Interactive Basin Explorer**: Dynamic basin selection with real-time data loading
 - **Glacier Information Panel**: Detailed glacier metrics including area, elevation range, and snow cover statistics
@@ -189,7 +189,7 @@ We welcome contributions! Please feel free to submit issues, enhancement request
 
 ## Citation
 
-If you use GlaciermMapper-CA in your research, please cite:
+If you use GlacierMapper-CA in your research, please cite:
 ```
 [Citation information to be added]
 ```
