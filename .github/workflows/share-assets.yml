@@ -29,25 +29,17 @@ jobs:
         env:
           GEE_SERVICE_ACCOUNT_KEY: ${{ secrets.GEE_SERVICE_ACCOUNT_KEY }}
         run: |
+          cd Github_Actions
           echo "$GEE_SERVICE_ACCOUNT_KEY" > service_account_key.json
-          python -c "
-          import ee
-          import os
-          
-          # Authenticate using service account
-          service_account = 'thurgau-irrigation@thurgau-irrigation.iam.gserviceaccount.com'
-          credentials = ee.ServiceAccountCredentials(service_account, 'service_account_key.json')
-          ee.Initialize(credentials, project='thurgau-irrigation')
-          print('Earth Engine initialized successfully')
-          "
+          echo "Service account key written successfully"
+          ls -la service_account_key.json
 
       - name: Share assets publicly
-        env:
-          GEE_SERVICE_ACCOUNT_KEY: ${{ secrets.GEE_SERVICE_ACCOUNT_KEY }}
         run: |
           cd Github_Actions
           python share_assets.py
 
       - name: Clean up service account key
         run: |
+          cd Github_Actions
           rm -f service_account_key.json

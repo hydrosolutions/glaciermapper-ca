@@ -16,14 +16,23 @@ Requirements:
 """
 
 import ee
+import os
 from datetime import datetime, timedelta, timezone
 
 def initialize_earth_engine():
     """Initialize Google Earth Engine with service account credentials."""
     try:
-        # Initialize Earth Engine (credentials should already be set up)
-        ee.Initialize(project='thurgau-irrigation')
-        print("✅ Earth Engine initialized successfully")
+        # Check if service account key file exists
+        if os.path.exists('service_account_key.json'):
+            # Use service account authentication
+            service_account = 'thurgau-irrigation@thurgau-irrigation.iam.gserviceaccount.com'
+            credentials = ee.ServiceAccountCredentials(service_account, 'service_account_key.json')
+            ee.Initialize(credentials, project='thurgau-irrigation')
+            print("✅ Earth Engine initialized successfully with service account")
+        else:
+            # Fallback to default authentication (for local testing)
+            ee.Initialize(project='thurgau-irrigation')
+            print("✅ Earth Engine initialized successfully with default credentials")
         return True
     except Exception as e:
         print(f"❌ Failed to initialize Earth Engine: {e}")
