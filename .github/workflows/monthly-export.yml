@@ -47,20 +47,14 @@ jobs:
         echo '${{ secrets.GEE_SERVICE_ACCOUNT_KEY }}' > thurgau-irrigation-4767961f11f5.json
         export GOOGLE_APPLICATION_CREDENTIALS="thurgau-irrigation-4767961f11f5.json"
     
-    - name: Run offline tests first
-      run: python test_offline.py
+    - name: Run validation tests first
+      run: python test_validate.py
     
     - name: Run export (test mode)
       if: ${{ github.event.inputs.test_mode == 'true' }}
-      run: |
-        echo "Running in test mode..."
-        python -c "
-        import datetime as dt
-        print('Test mode: Would run export with limited scope')
-        print(f'Current month for export: {dt.datetime.now().month-1}')
-        print(f'Current year: {dt.datetime.now().year}')
-        print('In test mode, only the first basin would be processed')
-        "
+      run: python test_mode.py
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: thurgau-irrigation-4767961f11f5.json
     
     - name: Run full export
       if: ${{ github.event.inputs.test_mode != 'true' }}
