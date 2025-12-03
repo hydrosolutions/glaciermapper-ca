@@ -83,7 +83,7 @@ def run_monthly_export():
         mean_value = aspect_values.reduce(ee.Reducer.mean())
         return ft.set('system:time_start', time.millis()).set('value', mean_value)
 
-    for catchment_name in catchment_names[1:3]:
+    for catchment_name in catchment_names:
         print(f"Processing catchment {catchment_name}...")
         
         # Get existing assets for this catchment and create a flattened collection
