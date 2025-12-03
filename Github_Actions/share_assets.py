@@ -25,7 +25,7 @@ def initialize_earth_engine():
         # Check if service account key file exists
         if os.path.exists('service_account_key.json'):
             # Use service account authentication
-            service_account = 'thurgau-irrigation@thurgau-irrigation.iam.gserviceaccount.com'
+            service_account = 'glaciermapper@thurgau-irrigation.iam.gserviceaccount.com'
             credentials = ee.ServiceAccountCredentials(service_account, 'service_account_key.json')
             ee.Initialize(credentials, project='thurgau-irrigation')
             print("✅ Earth Engine initialized successfully with service account")
