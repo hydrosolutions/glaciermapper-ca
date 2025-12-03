@@ -102,7 +102,13 @@ def share_recent_assets():
                 shared_count += 1
                 
             except Exception as e:
-                print(f"❌ Failed to share {asset_id}: {e}")
+                error_msg = str(e)
+                if "Permission" in error_msg and "setIamPolicy" in error_msg:
+                    print(f"❌ Failed to share {asset_id}: Missing IAM permissions")
+                    print(f"   💡 Service account needs 'Earth Engine Admin' role")
+                    print(f"   📖 See Github_Actions/PERMISSIONS.md for setup instructions")
+                else:
+                    print(f"❌ Failed to share {asset_id}: {e}")
                 failed_count += 1
         
         print(f"\n📈 Summary:")

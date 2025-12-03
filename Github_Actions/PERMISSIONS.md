@@ -29,6 +29,11 @@ Your service account (`glaciermapper@thurgau-irrigation.iam.gserviceaccount.com`
 - **Purpose**: Write access for exporting results
 - **Required for**: Exporting processed data to Earth Engine assets
 
+### 4. Earth Engine Admin (for asset sharing)
+- **Role**: `roles/earthengine.admin`
+- **Purpose**: Administrative access to manage asset permissions
+- **Required for**: Making assets publicly accessible via setIamPolicy
+
 ## Setup Instructions
 
 ### Step 1: Access Google Cloud Console
@@ -43,6 +48,7 @@ Your service account (`glaciermapper@thurgau-irrigation.iam.gserviceaccount.com`
    - `Service Usage Consumer`
    - `Earth Engine Viewer` (or `Earth Engine Developer`)
    - `Earth Engine Writer`
+   - `Earth Engine Admin` (required for asset sharing)
 4. Click "SAVE"
 
 ### Step 3: Wait for Propagation
@@ -122,6 +128,20 @@ Common issues and solutions:
 4. **Set up GitHub secret** for `GEE_SERVICE_ACCOUNT_KEY`
 5. **Test the workflow** in test mode first
 6. **Monitor first automated run** on January 1st
+
+## Asset Sharing Permissions
+
+The automated asset sharing (via `share_assets.py`) requires the **Earth Engine Admin** role specifically for:
+- Setting IAM policies on Earth Engine assets (`earthengine.assets.setIamPolicy`)
+- Making exported assets publicly accessible for the web application
+- Managing asset permissions across the entire project
+
+If you see errors like:
+```
+Permission 'earthengine.assets.setIamPolicy' denied on resource
+```
+
+This indicates the service account needs the `Earth Engine Admin` role added in Google Cloud Console.
 
 ## Support
 
