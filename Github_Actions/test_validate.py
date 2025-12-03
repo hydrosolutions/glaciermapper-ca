@@ -83,7 +83,7 @@ def test_file_structure():
     print("🔍 Testing file structure...")
     
     required_files = [
-        "run_export.py",
+        "Github_Actions/run_export.py",  # Main export script (moved to Github_Actions)
         "requirements.txt",
         "src/modis_processing.py",
         "src/dem_processing.py", 
