@@ -28,13 +28,21 @@ def main():
     # Show what would be processed
     current_month = dt.datetime.now().month
     current_year = dt.datetime.now().year
-    previous_month = current_month - 1 if current_month > 1 else 12
-    year_for_export = current_year if current_month > 1 else current_year - 1
     
-    print(f"\n📅 Export Configuration:")
+    # Determine the appropriate export period for semi-annual schedule
+    if current_month >= 7:  # July-December, export first half of year (Jan-June)
+        export_period = "Jan-Jun"
+        export_months = "01-06"
+    else:  # January-June, export second half of previous year (Jul-Dec)
+        export_period = "Jul-Dec (previous year)"
+        export_months = "07-12"
+        current_year -= 1
+    
+    print(f"\n📅 Semi-Annual Export Configuration:")
     print(f"   Current date: {dt.datetime.now().strftime('%Y-%m-%d')}")
-    print(f"   Export period: {year_for_export}-{previous_month:02d}")
-    print(f"   Asset naming: decadal_SLA_*_{year_for_export}_{previous_month:02d}")
+    print(f"   Export period: {export_period} {current_year}")
+    print(f"   Export months: {export_months}")
+    print(f"   Schedule: January 1st & July 1st at 02:00 UTC")
     
     print(f"\n🔄 Test Mode Simulation:")
     print("   ✅ Would initialize Earth Engine")
@@ -42,11 +50,11 @@ def main():
     print("   ✅ Would load GLIMS glacier inventory")
     print("   ✅ Would process MODIS decadal composites")
     print("   ✅ Would calculate snowline elevations")
-    print("   ✅ Would export to Earth Engine assets")
+    print("   ✅ Would export semi-annual results to Earth Engine assets")
     
     print(f"\n✅ Test mode completed successfully!")
     print("   In production mode, this would process all Central Asia basins")
-    print("   and export monthly snowline analysis results.")
+    print("   and export semi-annual snowline analysis results.")
     
     return 0
 

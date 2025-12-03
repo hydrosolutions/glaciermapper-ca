@@ -64,8 +64,8 @@ def test_imports():
         import ee
         print("✅ earthengine-api imported")
         
-        # Test project modules
-        project_root = Path(__file__).parent
+        # Test project modules - adjust path to parent directory
+        project_root = Path(__file__).parent.parent
         sys.path.append(str(project_root))
         
         from src.modis_processing import create_decadal_composites
