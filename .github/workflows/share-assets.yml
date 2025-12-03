@@ -1,0 +1,53 @@
+name: Share GEE Assets Publicly
+
+on:
+  schedule:
+    # Run 5 days after the export workflow (January 6th and July 6th at 2:00 AM UTC)
+    - cron: '0 2 6 1,7 *'
+  workflow_dispatch:
+    # Allow manual triggering for testing
+
+jobs:
+  share-assets:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Authenticate with Google Earth Engine
+        env:
+          GEE_SERVICE_ACCOUNT_KEY: ${{ secrets.GEE_SERVICE_ACCOUNT_KEY }}
+        run: |
+          echo "$GEE_SERVICE_ACCOUNT_KEY" > service_account_key.json
+          python -c "
+          import ee
+          import os
+          
+          # Authenticate using service account
+          service_account = 'thurgau-irrigation@thurgau-irrigation.iam.gserviceaccount.com'
+          credentials = ee.ServiceAccountCredentials(service_account, 'service_account_key.json')
+          ee.Initialize(credentials, project='thurgau-irrigation')
+          print('Earth Engine initialized successfully')
+          "
+
+      - name: Share assets publicly
+        env:
+          GEE_SERVICE_ACCOUNT_KEY: ${{ secrets.GEE_SERVICE_ACCOUNT_KEY }}
+        run: |
+          cd Github_Actions
+          python share_assets.py
+
+      - name: Clean up service account key
+        run: |
+          rm -f service_account_key.json
