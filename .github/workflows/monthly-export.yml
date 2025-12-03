@@ -1,0 +1,86 @@
+name: Monthly Glacier Mapper Export
+
+on:
+  schedule:
+    # Run on the 1st day of every month at 02:00 UTC
+    - cron: '0 2 1 * *'
+  
+  workflow_dispatch:  # Allow manual triggering
+    inputs:
+      test_mode:
+        description: 'Run in test mode (single basin)'
+        required: false
+        default: 'false'
+        type: boolean
+
+env:
+  PYTHON_VERSION: '3.10'
+
+jobs:
+  export-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Set up Google Earth Engine credentials
+      run: |
+        echo '${{ secrets.GEE_SERVICE_ACCOUNT_KEY }}' > thurgau-irrigation-4767961f11f5.json
+        export GOOGLE_APPLICATION_CREDENTIALS="thurgau-irrigation-4767961f11f5.json"
+    
+    - name: Run offline tests first
+      run: python test_offline.py
+    
+    - name: Run export (test mode)
+      if: ${{ github.event.inputs.test_mode == 'true' }}
+      run: |
+        echo "Running in test mode..."
+        python -c "
+        import datetime as dt
+        print('Test mode: Would run export with limited scope')
+        print(f'Current month for export: {dt.datetime.now().month-1}')
+        print(f'Current year: {dt.datetime.now().year}')
+        print('In test mode, only the first basin would be processed')
+        "
+    
+    - name: Run full export
+      if: ${{ github.event.inputs.test_mode != 'true' }}
+      run: python run_export.py
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: thurgau-irrigation-4767961f11f5.json
+    
+    - name: Clean up credentials
+      if: always()
+      run: rm -f thurgau-irrigation-4767961f11f5.json
+    
+    - name: Notify on failure
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: 'Monthly Export Failed',
+            body: `The monthly glacier mapper export failed on ${new Date().toISOString()}.\n\nPlease check the [workflow run](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) for details.`,
+            labels: ['bug', 'automated']
+          })

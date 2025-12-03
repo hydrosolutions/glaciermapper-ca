@@ -120,3 +120,6 @@ dmypy.json
 # JavaScript files to ignore
 src/Dilara_Kim_codes.js
 src/get_glacier_mask.js
+
+# credentials/
+thurgau-irrigation-4767961f11f5.json
