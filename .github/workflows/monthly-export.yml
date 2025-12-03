@@ -44,8 +44,16 @@ jobs:
     
     - name: Set up Google Earth Engine credentials
       run: |
+        if [ -z "${{ secrets.GEE_SERVICE_ACCOUNT_KEY }}" ]; then
+          echo "❌ ERROR: GEE_SERVICE_ACCOUNT_KEY secret is not set"
+          echo "Please add the secret in repository Settings > Secrets and variables > Actions"
+          echo "Secret name: GEE_SERVICE_ACCOUNT_KEY"
+          echo "Secret value: Complete contents of thurgau-irrigation-4767961f11f5.json"
+          exit 1
+        fi
         echo '${{ secrets.GEE_SERVICE_ACCOUNT_KEY }}' > thurgau-irrigation-4767961f11f5.json
         export GOOGLE_APPLICATION_CREDENTIALS="thurgau-irrigation-4767961f11f5.json"
+        echo "✅ Service account credentials configured"
     
     - name: Run validation tests first
       run: python test_validate.py

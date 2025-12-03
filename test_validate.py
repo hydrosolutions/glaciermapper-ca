@@ -17,11 +17,26 @@ def test_environment():
     key_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "thurgau-irrigation-4767961f11f5.json")
     if not os.path.exists(key_path):
         print(f"❌ Service account file not found: {key_path}")
+        print("   Make sure GOOGLE_APPLICATION_CREDENTIALS is set or file exists")
         return False
     
     try:
         with open(key_path) as f:
-            key = json.load(f)
+            content = f.read().strip()
+        
+        if not content:
+            print("❌ Service account file is empty")
+            print("   Check that the GitHub secret GEE_SERVICE_ACCOUNT_KEY is properly set")
+            return False
+        
+        if content.startswith('${{') or content.startswith('***'):
+            print("❌ Service account file contains GitHub secrets placeholder")
+            print("   The GEE_SERVICE_ACCOUNT_KEY secret is not properly configured")
+            print("   Go to repository Settings > Secrets and variables > Actions")
+            print("   Add secret 'GEE_SERVICE_ACCOUNT_KEY' with your service account JSON content")
+            return False
+        
+        key = json.loads(content)
         
         required_fields = ['client_email', 'project_id', 'private_key']
         for field in required_fields:
@@ -31,6 +46,11 @@ def test_environment():
         
         print(f"✅ Service account file valid: {key['client_email']}")
         return True
+    except json.JSONDecodeError as e:
+        print(f"❌ Service account file contains invalid JSON: {e}")
+        print("   Check that the GitHub secret GEE_SERVICE_ACCOUNT_KEY contains valid JSON")
+        print("   The JSON should be the complete contents of your service account file")
+        return False
     except Exception as e:
         print(f"❌ Service account file error: {e}")
         return False
