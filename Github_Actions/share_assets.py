@@ -88,10 +88,6 @@ def share_recent_assets():
                 ee.data.setIamPolicy(asset_id, {
                     'bindings': [
                         {
-                            'role': 'roles/owner', 
-                            'members': ['user:workshop.gee@gmail.com']
-                        },
-                        {
                             'role': 'roles/viewer', 
                             'members': ['allUsers']
                         }
