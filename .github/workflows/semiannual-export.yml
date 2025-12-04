@@ -2,8 +2,9 @@ name: Semi-Annual Glacier Mapper Export
 
 on:
   schedule:
-    # Run on January 1st and July 1st at 02:00 UTC (every 6 months)
-    - cron: '0 2 1 1,7 *'
+    # Run on December 31st and June 30th at 02:00 UTC (every 6 months)
+    - cron: '0 2 30 6 *'
+    - cron: '0 2 31 12 *'
   
   workflow_dispatch:  # Allow manual triggering
     inputs:
