@@ -29,11 +29,16 @@ Beyond the web application, this repository contains the complete toolkit for sn
 
 ```
 glaciermapper-ca/
-├── main.py                    # Main application entry point
 ├── data/                      # Processed data files
 │   ├── fsc_sla_timeseries_gapfilled.csv  # Gap-filled snow metrics
 │   ├── fsc_sla_timeseries.csv            # Raw time series data
 │   └── meanNIR_TS_allBasins.csv          # NIR reflectance data
+├── Github_Actions/            # Automated workflow scripts
+│   ├── run_export.py                     # Main export script for MODIS
+│   ├── test_validate.py                  # Environment validation script
+│   ├── test_mode.py                      # Safe test mode simulation
+│   ├── share_assets.py                   # Asset sharing utilities
+│   └── *.md                              # Setup and configuration docs
 ├── notebooks/                 # Analysis tools
 │   ├── CA_glaciermapper.js               # Web application source code
 │   └── Snowcover Analysis.ipynb          # Jupyter notebook for analysis
@@ -78,6 +83,12 @@ glaciermapper-ca/
   - Google Earth Engine integration
   - Automated data export to cloud assets
 
+- **Automated data processing**
+  - Semi-annual GitHub Actions workflows
+  - Automated MODIS data export and processing
+  - Environment validation and testing scripts
+  - Asset sharing and cloud deployment utilities
+
 ## 🚀 Quick Start
 
 ### Option 1: Use the Web Application (Recommended)
@@ -111,11 +122,6 @@ Visit the [GlacierMapper-CA app](https://hydrosolutions.users.earthengine.app/vi
 4. Analyze snow cover trends and patterns
 
 ### Local Analysis
-Run the main analysis:
-```bash
-python main.py
-```
-
 For interactive analysis, open the Jupyter notebook:
 ```bash
 jupyter notebook notebooks/Snowcover\ Analysis.ipynb
@@ -162,6 +168,12 @@ The project processes and generates several types of data:
 - Terrain aspect classification
 - Elevation band analysis
 
+### `Github_Actions/`
+- Automated workflow scripts for semi-annual data processing
+- Environment validation and testing utilities
+- Asset sharing and cloud deployment tools
+- Comprehensive setup and configuration documentation
+
 ## 🌐 Web Application Architecture
 
 The **GlacierMapper-CA** Google Earth Engine application (`notebooks/CA_glaciermapper.js`) provides:
@@ -186,13 +198,6 @@ The toolkit generates standardized data products used by the web application:
 ## Contributing
 
 We welcome contributions! Please feel free to submit issues, enhancement requests, or pull requests.
-
-## Citation
-
-If you use GlacierMapper-CA in your research, please cite:
-```
-[Citation information to be added]
-```
 
 ## License
 
