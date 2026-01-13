@@ -11,7 +11,12 @@ on:
       test_mode:
         description: 'Run in test mode (single basin)'
         required: false
-        default: 'false'
+        default: false
+        type: boolean
+      test_dash:
+        description: 'Test catchment with dashes (debug mode)'
+        required: false
+        default: false
         type: boolean
 
 env:
@@ -59,14 +64,20 @@ jobs:
     - name: Run validation tests first
       run: python Github_Actions/test_validate.py
     
+    - name: Run dash test (debug mode)
+      if: ${{ github.event.inputs.test_dash == 'true' }}
+      run: python Github_Actions/test_dash_catchment.py
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: thurgau-irrigation-4767961f11f5.json
+    
     - name: Run export (test mode)
-      if: ${{ github.event.inputs.test_mode == 'true' }}
+      if: ${{ github.event.inputs.test_mode == 'true' && github.event.inputs.test_dash != 'true' }}
       run: python Github_Actions/test_mode.py
       env:
         GOOGLE_APPLICATION_CREDENTIALS: thurgau-irrigation-4767961f11f5.json
     
     - name: Run full export
-      if: ${{ github.event.inputs.test_mode != 'true' }}
+      if: ${{ github.event.inputs.test_mode != 'true' && github.event.inputs.test_dash != 'true' }}
       run: python Github_Actions/run_export.py
       env:
         GOOGLE_APPLICATION_CREDENTIALS: thurgau-irrigation-4767961f11f5.json
