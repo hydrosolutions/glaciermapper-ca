@@ -20,7 +20,7 @@ on:
         type: boolean
 
 env:
-  PYTHON_VERSION: '3.10'
+  PYTHON_VERSION: '3.11'
 
 jobs:
   export-data:
