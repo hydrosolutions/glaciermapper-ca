@@ -72,6 +72,11 @@ def run_monthly_export():
     
     # Loop over each basin and export results for a given month (or several months)
     catchment_names = RiverBasins_2023.aggregate_array('NAME').getInfo()
+    
+    # Optional: Filter to test with specific catchment(s)
+    # Uncomment the line below to test with a single catchment
+    # catchment_names = ['BALKH_12-0.000-10M']
+    
     # Get the current month
     current_month = dt.datetime.now().month  # returns 1-12
     current_year = dt.datetime.now().year

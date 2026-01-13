@@ -18,6 +18,11 @@ on:
         required: false
         default: false
         type: boolean
+      single_catchment:
+        description: 'Run for single catchment only (provide catchment name)'
+        required: false
+        default: ''
+        type: string
 
 env:
   PYTHON_VERSION: '3.11'
@@ -78,7 +83,29 @@ jobs:
     
     - name: Run full export
       if: ${{ github.event.inputs.test_mode != 'true' && github.event.inputs.test_dash != 'true' }}
-      run: python Github_Actions/run_export.py
+      run: |
+        if [ -n "${{ github.event.inputs.single_catchment }}" ]; then
+          echo "Running export for single catchment: ${{ github.event.inputs.single_catchment }}"
+          python -c "
+        import sys
+        from pathlib import Path
+        
+        # Read the file
+        file_path = Path('Github_Actions/run_export.py')
+        content = file_path.read_text()
+        
+        # Uncomment and set the specific catchment
+        content = content.replace(
+            '# catchment_names = [\\'BALKH_12-0.000-10M\\']',
+            'catchment_names = [\\'${{ github.event.inputs.single_catchment }}\\']'
+        )
+        
+        # Write back
+        file_path.write_text(content)
+        print('✅ Modified run_export.py for single catchment')
+        "
+        fi
+        python Github_Actions/run_export.py
       env:
         GOOGLE_APPLICATION_CREDENTIALS: thurgau-irrigation-4767961f11f5.json
     
