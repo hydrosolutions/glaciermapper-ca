@@ -191,7 +191,7 @@ def run_monthly_export():
         export_layer_name = 'decadal_SLA'  # Modify as needed
         
         # Create year_month string for asset naming
-        year_month = f"{current_year}_{current_month-1:02d}"
+        year_month = f"{current_year}_{current_month:02d}"
         
         # Export to asset
         task = ee.batch.Export.table.toAsset(

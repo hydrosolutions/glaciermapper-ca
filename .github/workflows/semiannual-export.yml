@@ -13,11 +13,6 @@ on:
         required: false
         default: false
         type: boolean
-      test_dash:
-        description: 'Test catchment with dashes (debug mode)'
-        required: false
-        default: false
-        type: boolean
       single_catchment:
         description: 'Run for single catchment only (provide catchment name)'
         required: false
@@ -69,20 +64,14 @@ jobs:
     - name: Run validation tests first
       run: python Github_Actions/test_validate.py
     
-    - name: Run dash test (debug mode)
-      if: ${{ github.event.inputs.test_dash == 'true' }}
-      run: python Github_Actions/test_dash_catchment.py
-      env:
-        GOOGLE_APPLICATION_CREDENTIALS: thurgau-irrigation-4767961f11f5.json
-    
     - name: Run export (test mode)
-      if: ${{ github.event.inputs.test_mode == 'true' && github.event.inputs.test_dash != 'true' }}
+      if: ${{ github.event.inputs.test_mode == 'true' }}
       run: python Github_Actions/test_mode.py
       env:
         GOOGLE_APPLICATION_CREDENTIALS: thurgau-irrigation-4767961f11f5.json
     
     - name: Run full export
-      if: ${{ github.event.inputs.test_mode != 'true' && github.event.inputs.test_dash != 'true' }}
+      if: ${{ github.event.inputs.test_mode != 'true' }}
       run: |
         if [ -n "${{ github.event.inputs.single_catchment }}" ]; then
           echo "Running export for single catchment: ${{ github.event.inputs.single_catchment }}"
