@@ -56,6 +56,10 @@ def test_dash_catchment():
     print(f"   Contains dashes: {'-' in test_catchment}")
     print(f"   Contains dots: {'.' in test_catchment}")
     
+    # Sanitize catchment name for asset lookup (dots are removed in asset names)
+    sanitized_catchment_name = test_catchment.replace('.', '')
+    print(f"   Sanitized for lookup: {sanitized_catchment_name}")
+    
     # Check if this catchment exists
     all_catchments = RiverBasins_2023.aggregate_array('NAME').getInfo()
     if test_catchment not in all_catchments:
@@ -92,9 +96,10 @@ def test_dash_catchment():
     matching_assets = []
     
     print(f"\n🔍 Looking for existing assets for: {test_catchment}")
+    print(f"   Searching with sanitized name: {sanitized_catchment_name}")
     for i, asset_info in enumerate(assets_list):
         asset_path = asset_info['name']
-        if test_catchment in asset_path:
+        if sanitized_catchment_name in asset_path:
             print(f"   Found: {asset_path}")
             matching_assets.append(assetList_SLA[i])
     

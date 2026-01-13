@@ -86,14 +86,17 @@ def run_monthly_export():
     for catchment_name in catchment_names:
         print(f"Processing catchment {catchment_name}...")
         
+        # Sanitize catchment name for asset lookup (dots are removed in asset names)
+        sanitized_catchment_name = catchment_name.replace('.', '')
+        
         # Get existing assets for this catchment and create a flattened collection
         existing_assets = ee.FeatureCollection([])
         matching_assets = []  # Initialize matching_assets before the loop
         
         for i, asset_info in enumerate(assets_list):
             asset_path = asset_info['name']
-            # Check if the asset path contains our catchment name
-            if catchment_name in asset_path:
+            # Check if the asset path contains our sanitized catchment name
+            if sanitized_catchment_name in asset_path:
                 matching_assets.append(assetList_SLA[i])
         
         # Merge all matching assets after collecting them
