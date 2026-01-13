@@ -49,11 +49,12 @@ def test_dash_catchment():
     joinProperty='Year-Month-Day'
     print(f"✅ Total assets found: {len(assetList_SLA)}")
 
-    # Test with a catchment that has dashes
-    test_catchment = 'BALKH_12-0000-10M'
+    # Test with a catchment that has dashes and dots
+    test_catchment = 'BALKH_12-0.000-10M'
     
     print(f"\n🧪 Testing catchment: {test_catchment}")
     print(f"   Contains dashes: {'-' in test_catchment}")
+    print(f"   Contains dots: {'.' in test_catchment}")
     
     # Check if this catchment exists
     all_catchments = RiverBasins_2023.aggregate_array('NAME').getInfo()
